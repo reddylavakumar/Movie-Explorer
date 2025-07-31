@@ -12,6 +12,7 @@ import { useState } from "react";
 import { supabase } from "@/components/supabase/supabase-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/spinner/Spinner";
 
 export default function SignInPage() {
   const signInSchema = z.object({
@@ -165,7 +166,13 @@ export default function SignInPage() {
                   type="submit"
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                 >
-                  {disabled ? <Ellipsis /> : !isSignUp ? "Sign In" : "Sign Up"}
+                  {disabled ? (
+                    <Spinner size="small" className="text-white" />
+                  ) : !isSignUp ? (
+                    "Sign In"
+                  ) : (
+                    "Sign Up"
+                  )}
                 </Button>
               </>
             </div>

@@ -4,23 +4,50 @@ import MovieGrid from "@/components/moviecardandgrid/MovieGrid";
 import { Spinner } from "@/components/spinner/Spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { tmdbApi } from "@/lib/tmdb";
+import {
+  tmdbApi,
+  usePopularMovies,
+  useTopRatedMovies,
+  useTrendingMovies,
+} from "@/lib/tmdb";
 import { CircleX, SearchIcon } from "lucide-react";
 
-const [trending, popular, topRated] = await Promise.all([
-  tmdbApi.getTrending(),
+const [
+  // trending,
+  popular,
+  // ,topRated
+] = await Promise.all([
+  // tmdbApi.getTrending(),
   tmdbApi.getPopular(),
-  tmdbApi.getTopRated(),
+  // tmdbApi.searchMovies("rrr"),
+  // tmdbApi.getTopRated(),
 ]);
 
-export default async function Dashboard() {
-  const movies = popular.results;
-  console.log(movies, "movies 1");
+// const { data: trending, isLoading: isTrendingLoading } = useTrendingMovies();
+// const { data: popular, isLoading: isPopularLoading } = usePopularMovies();
+// const { data: topRated, isLoading: isTopRatedLoading } = useTopRatedMovies();
+type HomePageProps = {
+  searchParams: {
+    query?: string;
+  };
+};
+
+export default async function Dashboard({ searchParams }: HomePageProps) {
+  const searchQuery = searchParams.query || "";
+  let movies;
+  let searchResults = null;
+  if (searchQuery?.length > 0) {
+    searchResults = await tmdbApi?.searchMovies(searchQuery);
+    movies = searchResults.results;
+  } else {
+    movies = popular.results;
+  }
+  console.log(movies, "movies");
 
   return (
     <div>
       <Header />
-      {movies ? (
+      {movies.length > 0 ? (
         <main className=" bg-white dark:bg-[#2b1b14] min-h-screen">
           <div className="px-6 pt-6">
             {/* ----search bar---- */}
@@ -51,9 +78,7 @@ export default async function Dashboard() {
             ))}
           </div> */}
           </div>
-          <div className="mt-4">
-            <CarouselView movies={movies} />
-          </div>
+          <div className="mt-4">{<CarouselView movies={movies} />}</div>
           <section className="px-6 pb-16 text-white mt-10">
             <h2 className="text-2xl font-semibold text-black dark:text-white">
               Popular Movies
@@ -62,8 +87,9 @@ export default async function Dashboard() {
           </section>
         </main>
       ) : (
-        <main className="bg-[#2b1b14] min-h-screen flex justify-center items-center">
-          <Spinner size="small" className="text-white" />
+        <main className="bg-white dark:bg-[#2b1b14] min-h-[90vh] flex justify-center items-center">
+          {/* <Spinner size="small" className="text-white" /> */}
+          <p>No movies Found</p>
         </main>
       )}
     </div>

@@ -24,7 +24,7 @@ type Movie = {
 const CarouselView = ({ movies }: { movies: Movie[] }) => {
   return (
     <div className="flex justify-center items-center dark:text-white">
-      <div className="w-screen max-w-7xl mx-auto rounded-xl shadow-2xl ">
+      <div className="w-screen max-w-7xl mx-auto rounded-xl">
         <Carousel
           plugins={[Autoplay({ delay: 5000, stopOnInteraction: true })]}
           className="w-full"
@@ -39,19 +39,29 @@ const CarouselView = ({ movies }: { movies: Movie[] }) => {
                              transform"
                 >
                   <div className="w-full md:w-1/2 flex justify-center items-center">
-                    <Image
-                      width={550}
-                      height={550}
-                      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                      alt={movie.title}
-                      className="w-full max-w-xs md:max-w-sm lg:max-w-md h-[550px] md:h-[450px]
+                    {movie.poster_path ? (
+                      <Image
+                        width={550}
+                        height={550}
+                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                        alt={movie.title}
+                        className="w-full max-w-xs md:max-w-sm lg:max-w-md h-[550px] md:h-[450px]
                                  object-cover rounded-lg shadow-lg border-2 border-gray-500
                                  transition-transform duration-300 ease-in-out transform"
-                      onError={(e) => {
-                        e.currentTarget.src = `https://placehold.co/500x700/333333/FFFFFF?text=No+Image`;
-                        e.currentTarget.onerror = null;
-                      }}
-                    />
+                        onError={(e) => {
+                          e.currentTarget.src = `https://placehold.co/500x700/333333/FFFFFF?text=No+Image`;
+                          e.currentTarget.onerror = null;
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className=" bg-gray-800 flex items-center justify-center text-white text-sm
+                      w-full max-w-xs md:max-w-sm lg:max-w-md h-[550px] md:h-[450px]
+                      "
+                      >
+                        No image available
+                      </div>
+                    )}
                   </div>
 
                   {/* Right - Details Section */}
@@ -97,8 +107,8 @@ const CarouselView = ({ movies }: { movies: Movie[] }) => {
             ))}
           </CarouselContent>
 
-          <CarouselPrevious className="absolute -left-20 top-1/2 -translate-y-1/2 z-20 h-14 w-14 rounded-full dark:bg-white/20 dark:text-white hover:bg-white/30 transition-colors duration-200 flex items-center justify-center" />
-          <CarouselNext className="absolute -right-20 top-1/2 -translate-y-1/2 z-20 h-14 w-14 rounded-full dark:bg-white/20 dark:text-white hover:bg-white/30 transition-colors duration-200 flex items-center justify-center" />
+          <CarouselPrevious className=" absolute -left-20 top-1/2 -translate-y-1/2 z-20 h-14 w-14 rounded-full dark:bg-white/20 dark:text-white hover:bg-white/30 transition-colors duration-200 flex items-center justify-center" />
+          <CarouselNext className=" absolute -right-20 top-1/2 -translate-y-1/2 z-20 h-14 w-14 rounded-full dark:bg-white/20 dark:text-white hover:bg-white/30 transition-colors duration-200 flex items-center justify-center" />
         </Carousel>
       </div>
     </div>

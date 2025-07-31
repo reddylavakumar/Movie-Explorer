@@ -34,13 +34,13 @@ export default function MovieGrid({ movies }: { movies: Movie[] }) {
       {movies.map((movie: any, idx: any) => (
         <MovieCard
           key={idx}
-          title={movie.title}
-          image={movie.poster_path}
+          title={movie?.title}
+          image={movie?.poster_path}
           movie={{
-            id: movie.id,
-            rating: movie.adult ? "A" : "UA 13+",
+            id: movie?.id,
+            rating: movie?.adult ? "A" : "UA 13+",
             language: movie.original_language.toUpperCase(),
-            genre: movie.genre_ids
+            genre: movie?.genre_ids
               .map((id: any) => genreMap[id])
               .filter(Boolean),
             isNew:

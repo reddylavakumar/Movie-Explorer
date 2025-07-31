@@ -31,7 +31,7 @@ export default async function MovieDetailsPage({
     fetch(
       `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}&language=en-US`,
       { next: { revalidate: 3600 } }
-    ), // Revalidate every hour
+    ),
     fetch(
       `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}&language=en-US`,
       { next: { revalidate: 3600 } }

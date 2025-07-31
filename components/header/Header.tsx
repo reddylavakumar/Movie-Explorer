@@ -1,15 +1,63 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { CircleX, Menu, Play, SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { ProfilePopover } from "../popover/PopOver";
 import { ThemeToggle } from "../theme/theme";
 import { Button } from "../ui/button";
-
+import { useSearchParams, useRouter } from "next/navigation";
+import { useTransition } from "react";
 export default function Header() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const [menuOpen, setMenuOpen] = useState(false);
+  // const [search, setSearch] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newQuery = e.target.value;
+  //   const params = new URLSearchParams(searchParams.toString());
+  //   if (newQuery) {
+  //     params.set("query", newQuery);
+  //   } else {
+  //     params.delete("query");
+  //   }
+  //   startTransition(() => {
+  //     router.push(`?${params.toString()}`);
+  //   });
+  // };
+  const updateURL = useCallback(
+    (query: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (query) {
+        params.set("query", query);
+      } else {
+        params.delete("query");
+      }
+
+      startTransition(() => {
+        router.push(`?${params.toString()}`);
+      });
+    },
+    [router, searchParams]
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
+    setInputValue(newQuery);
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      updateURL(newQuery);
+    }, 500);
+  };
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-white text-black dark:bg-[#2b1b14] dark:text-white">
       <div className="flex items-center justify-between px-4 md:px-6 py-4">
@@ -42,10 +90,25 @@ export default function Header() {
           <div className="relative hidden md:block max-w-md w-64">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <Input
-              className="pl-10 pr-10 bg-white  dark:bg-[#3a2a21] dark:border-none text-white placeholder:text-gray-400 rounded-md"
+              className="pl-10 pr-10 bg-white text-black dark:bg-[#3a2a21] dark:border-none dark:text-white placeholder:text-gray-400 rounded-md"
               placeholder="Search"
+              value={inputValue}
+              onChange={handleChange}
             />
-            {/* <CircleX className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-500 transition" /> */}
+            {inputValue?.length > 0 && (
+              <CircleX
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-gray-500 transition"
+                onClick={() => {
+                  setInputValue("");
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.delete("query");
+
+                  startTransition(() => {
+                    router.push(`?${params.toString()}`);
+                  });
+                }}
+              />
+            )}
           </div>
 
           <ProfilePopover />
