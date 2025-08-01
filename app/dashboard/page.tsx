@@ -3,6 +3,7 @@ import MovieGrid from "@/components/moviecardandgrid/MovieGrid";
 import { tmdbApi } from "@/lib/tmdb";
 import CarouselView from "@/components/carousel/CarouselView";
 import LazyMovieSections from "@/components/lazy/LazyMovieSections";
+import TransitionWrapper from "@/lib/TransitionWrapper";
 
 type HomePageProps = {
   searchParams: {
@@ -46,7 +47,7 @@ export default async function Dashboard({ searchParams }: HomePageProps) {
       <main className="bg-white dark:bg-[#2b1b14] min-h-screen">
         {/* <div className="px-6 pt-6"></div> */}
 
-        {isFilteredView ? (
+        {/* {isFilteredView ? (
           movies && movies?.length > 0 ? (
             <section className="px-6 pb-16 text-white dark:bg-[#2b1b14]">
               <h2 className="text-2xl font-semibold text-black  dark:text-white mb-4 pt-5">
@@ -75,7 +76,45 @@ export default async function Dashboard({ searchParams }: HomePageProps) {
               popular={popular?.results?.slice(0, 5) || []}
             />
           </>
-        )}
+        )} */}
+
+        <TransitionWrapper
+          triggerKey={
+            isFilteredView
+              ? `filtered-${searchType}-${searchQuery}`
+              : "default-view"
+          }
+        >
+          {isFilteredView ? (
+            movies && movies.length > 0 ? (
+              <section className="px-6 pb-16 text-white dark:bg-[#2b1b14]">
+                <h2 className="text-2xl font-semibold text-black  dark:text-white mb-4 pt-5">
+                  {searchType
+                    ? searchType
+                        .split("-")
+                        .map((word) => word[0].toUpperCase() + word.slice(1))
+                        .join(" ")
+                    : "Search Results"}
+                </h2>
+                <MovieGrid movies={movies} />
+              </section>
+            ) : (
+              <div className="flex justify-center items-center min-h-[90vh] text-white">
+                <p>No movies found</p>
+              </div>
+            )
+          ) : (
+            <>
+              <section className="px-6 pt-10">
+                <CarouselView movies={topRated?.results || []} />
+              </section>
+              <LazyMovieSections
+                trending={trending?.results?.slice(0, 5) || []}
+                popular={popular?.results?.slice(0, 5) || []}
+              />
+            </>
+          )}
+        </TransitionWrapper>
       </main>
     </div>
   );

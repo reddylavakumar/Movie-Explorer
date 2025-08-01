@@ -167,7 +167,10 @@ export default function SignInPage() {
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                 >
                   {disabled ? (
-                    <Spinner size="small" className="text-white" />
+                    <>
+                      <Spinner size="small" className="text-white" />
+                      Signing In
+                    </>
                   ) : !isSignUp ? (
                     "Sign In"
                   ) : (
