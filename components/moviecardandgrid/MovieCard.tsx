@@ -39,7 +39,12 @@ export default function MovieCard({ title, image, movie }: MovieCardProps) {
             className="w-full h-[350px] object-cover group-hover:scale-[1.03] transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-[350px] bg-gray-800 flex items-center justify-center text-white text-sm">
+          <div
+            className="w-full h-[350px] bg-gray-800 flex items-center justify-center text-white text-sm 
+          
+          "
+          >
+            {/* animate-pulse */}
             No image available
           </div>
         )}
@@ -51,7 +56,7 @@ export default function MovieCard({ title, image, movie }: MovieCardProps) {
           className="text-lg font-semibold text-foreground leading-tight line-clamp-2"
           title={title}
         >
-          {title.length > 32 ? `${title.slice(0, 31)}...` : title}
+          {title?.length > 32 ? `${title.slice(0, 31)}...` : title}
         </p>
 
         <p className="text-sm text-muted-foreground mt-1">

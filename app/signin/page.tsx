@@ -185,7 +185,7 @@ export default function SignInPage() {
             <Button
               disabled={disabled}
               variant="outline"
-              className="w-full flex items-center gap-2 bg-white text-black"
+              className="w-full flex items-center gap-2 bg-white text-black dark:text-white"
               onClick={() => setIsSignUp((prev) => !prev)}
             >
               {/* <Image src="/google.svg" alt="Google" width={20} height={20} /> */}

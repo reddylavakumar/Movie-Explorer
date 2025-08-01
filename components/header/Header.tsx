@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { CircleX, Menu, Play, SearchIcon } from "lucide-react";
 import Link from "next/link";
@@ -8,56 +8,54 @@ import { ThemeToggle } from "../theme/theme";
 import { Button } from "../ui/button";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
+import useDebouncedValue from "@/lib/Debounce";
+// import useDebouncedValue from "@/lib/Debounce.ts";
+
 export default function Header() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [activeButton, setActiveButton] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [search, setSearch] = useState("");
   const [inputValue, setInputValue] = useState("");
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const newQuery = e.target.value;
-  //   const params = new URLSearchParams(searchParams.toString());
-  //   if (newQuery) {
-  //     params.set("query", newQuery);
-  //   } else {
-  //     params.delete("query");
-  //   }
-  //   startTransition(() => {
-  //     router.push(`?${params.toString()}`);
-  //   });
-  // };
-  const updateURL = useCallback(
-    (query: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+  const debouncedQuery = useDebouncedValue(inputValue, 300);
 
-      if (query) {
-        params.set("query", query);
-      } else {
-        params.delete("query");
-      }
-
-      startTransition(() => {
-        router.push(`?${params.toString()}`);
-      });
-    },
-    [router, searchParams]
-  );
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (debouncedQuery) {
+      params.set("query", debouncedQuery);
+    } else {
+      params.delete("query");
+    }
+    router.push(`?${params.toString()}`);
+  }, [debouncedQuery, router, searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = e.target.value;
-    setInputValue(newQuery);
-
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      updateURL(newQuery);
-    }, 500);
+    setInputValue(e.target.value);
   };
+  const handleClick = (item: any) => {
+    if (activeButton === item.query) {
+      return;
+    }
+    setActiveButton(item.query);
+    if (item?.query == "home") {
+      router.push("/");
+    } else if (item?.query == "trending") {
+      router.push(`?type=trending`);
+    } else if (item?.query == "series") {
+      router.push(`?type=series`);
+    } else if (item?.query == "newpopular") {
+      router.push(`?type=new-popular`);
+    }
+  };
+
+  const buttonsForNav = [
+    { name: "Home", query: "home" },
+    { name: "Series", query: "series" },
+    { name: "Trending", query: "trending" },
+    { name: "New & Popular", query: "newpopular" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-white text-black dark:bg-[#2b1b14] dark:text-white">
       <div className="flex items-center justify-between px-4 md:px-6 py-4">
@@ -70,17 +68,15 @@ export default function Header() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            {["Home", "Series", "Movies", "New & Popular", "My List"].map(
-              (label, index) => (
-                <Link
-                  key={index}
-                  href="/"
-                  className="hover:text-muted-foreground transition-colors"
-                >
-                  {label}
-                </Link>
-              )
-            )}
+            {buttonsForNav.map((item, index) => (
+              <Button
+                variant={activeButton === item?.query ? "outline" : "link"}
+                key={index}
+                onClick={() => handleClick(item)}
+              >
+                {item?.name}
+              </Button>
+            ))}
           </nav>
         </div>
 
@@ -103,9 +99,9 @@ export default function Header() {
                   const params = new URLSearchParams(searchParams.toString());
                   params.delete("query");
 
-                  startTransition(() => {
-                    router.push(`?${params.toString()}`);
-                  });
+                  // startTransition(() => {
+                  router.push(`?${params.toString()}`);
+                  // });
                 }}
               />
             )}
@@ -124,18 +120,16 @@ export default function Header() {
 
       {menuOpen && (
         <nav className="md:hidden px-4 pb-4 space-y-2 text-sm font-medium bg-white dark:bg-[#2b1b14] border-t border-border">
-          {["Home", "Series", "Movies", "New & Popular", "My List"].map(
-            (label, index) => (
-              <Link
-                key={index}
-                href="/"
-                className="block py-1 px-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                onClick={() => setMenuOpen(false)}
-              >
-                {label}
-              </Link>
-            )
-          )}
+          {buttonsForNav.map((item, index) => (
+            <Button
+              variant={"link"}
+              key={index}
+              onClick={() => handleClick(item)}
+              className="block py-1 px-2 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            >
+              {item?.name}
+            </Button>
+          ))}
         </nav>
       )}
     </header>

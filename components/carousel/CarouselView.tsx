@@ -15,6 +15,7 @@ import { Star } from "lucide-react";
 type Movie = {
   id: number;
   title: string;
+  name?: string;
   poster_path: string;
   overview?: string;
   release_date?: string;
@@ -44,7 +45,7 @@ const CarouselView = ({ movies }: { movies: Movie[] }) => {
                         width={550}
                         height={550}
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        alt={movie.title}
+                        alt={movie?.title ?? movie?.name}
                         className="w-full max-w-xs md:max-w-sm lg:max-w-md h-[550px] md:h-[450px]
                                  object-cover rounded-lg shadow-lg border-2 border-gray-500
                                  transition-transform duration-300 ease-in-out transform"

@@ -91,10 +91,10 @@ export default async function MovieDetailsPage({
             movieInfo.backdrop_path || movieInfo.poster_path,
             "original"
           )}
-          alt={movieInfo.title || "Movie Backdrop"}
+          alt={movieInfo?.title || "Movie Backdrop"}
           width={1200}
           height={500}
-          className="rounded-lg object-cover w-full h-[300px] md:h-[450px]"
+          className="rounded-lg object-cover w-full h-[300px] md:h-[545px]"
           priority
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
         />

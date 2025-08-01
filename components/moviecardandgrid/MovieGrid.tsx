@@ -27,14 +27,12 @@ const genreMap: { [key: number]: string } = {
   37: "Western",
 };
 export default function MovieGrid({ movies }: { movies: Movie[] }) {
-  console.log(movies, "movies");
-
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 px-8 py-8 ">
       {movies.map((movie: any, idx: any) => (
         <MovieCard
           key={idx}
-          title={movie?.title}
+          title={movie?.title ?? movie.name}
           image={movie?.poster_path}
           movie={{
             id: movie?.id,
