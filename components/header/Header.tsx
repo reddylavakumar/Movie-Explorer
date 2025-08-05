@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { CircleX, Menu, Play, SearchIcon } from "lucide-react";
 import Link from "next/link";
@@ -7,9 +7,7 @@ import { ProfilePopover } from "../popover/PopOver";
 import { ThemeToggle } from "../theme/theme";
 import { Button } from "../ui/button";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useTransition } from "react";
 import useDebouncedValue from "@/lib/Debounce";
-// import useDebouncedValue from "@/lib/Debounce.ts";
 
 export default function Header() {
   const router = useRouter();
@@ -33,29 +31,61 @@ export default function Header() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
-  const handleClick = (item: any) => {
-    if (activeButton === item.query) {
-      return;
-    }
-    setActiveButton(item.query);
-    if (item?.query == "home") {
-      router.push("/");
-    } else if (item?.query == "trending") {
-      router.push(`?type=trending`);
-    } else if (item?.query == "series") {
-      router.push(`?type=series`);
-    } else if (item?.query == "newpopular") {
-      router.push(`?type=new-popular`);
-    }
-  };
+  // const handleClick = (item: any) => {
+  //   if (activeButton === item.query) {
+  //     return;
+  //   }
+  //   setActiveButton(item.query);
+  //   if (item?.query == "home") {
+  //     router.push("/");
+  //   } else if (item?.query == "trending") {
+  //     router.push(`?type=trending`);
+  //   } else if (item?.query == "series") {
+  //     router.push(`?type=series`);
+  //   } else if (item?.query == "newpopular") {
+  //     router.push(`?type=new-popular`);
+  //   }
+  // };
 
-  const buttonsForNav = [
-    { name: "Home", query: "home" },
-    { name: "Series", query: "series" },
-    { name: "Trending", query: "trending" },
-    { name: "New & Popular", query: "newpopular" },
-  ];
+  const handleClick = useCallback(
+    (item: { query: string }) => {
+      if (activeButton === item.query) return;
 
+      setActiveButton(item.query);
+
+      switch (item.query) {
+        case "home":
+          router.push("/");
+          break;
+        case "trending":
+          router.push("?type=trending");
+          break;
+        case "series":
+          router.push("?type=series");
+          break;
+        case "newpopular":
+          router.push("?type=new-popular");
+          break;
+      }
+    },
+    [activeButton, router]
+  );
+
+  // const buttonsForNav = [
+  //   { name: "Home", query: "home" },
+  //   { name: "Series", query: "series" },
+  //   { name: "Trending", query: "trending" },
+  //   { name: "New & Popular", query: "newpopular" },
+  // ];
+  const buttonsForNav = useMemo(
+    () => [
+      { name: "Home", query: "home" },
+      { name: "Series", query: "series" },
+      { name: "Trending", query: "trending" },
+      { name: "New & Popular", query: "newpopular" },
+    ],
+    []
+  );
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-white text-black dark:bg-[#2b1b14] dark:text-white">
       <div className="flex items-center justify-between px-4 md:px-6 py-4">

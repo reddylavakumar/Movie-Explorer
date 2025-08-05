@@ -58,10 +58,10 @@ const axiosClient = axios.create({
   },
 });
 
-const tmdbFetch = async (endpoint: string, extraParams = {}) => {
+const tmdbFetch = async (endpoint: string, searchParams = {}) => {
   try {
     const response = await axiosClient.get(endpoint, {
-      params: extraParams,
+      params: searchParams,
     });
     return response.data;
   } catch (error: any) {
@@ -79,4 +79,17 @@ export const tmdbApi = {
   searchMovies: (query: string) =>
     tmdbFetch("/search/movie", { query: encodeURIComponent(query) }),
   shows: () => tmdbFetch("/tv/popular"),
+
+  // movie details page API
+  getMovieInfo: (movieId: number | string) =>
+    tmdbFetch(`/movie/${movieId}`, { language: "en-US" }),
+
+  getMovieCredits: (movieId: number | string) =>
+    tmdbFetch(`/movie/${movieId}/credits`, { language: "en-US" }),
+
+  getSimilarMovies: (movieId: number | string) =>
+    tmdbFetch(`/movie/${movieId}/similar`, { language: "en-US" }),
+
+  getRecommendations: (movieId: number | string) =>
+    tmdbFetch(`/movie/${movieId}/recommendations`, { language: "en-US" }),
 };

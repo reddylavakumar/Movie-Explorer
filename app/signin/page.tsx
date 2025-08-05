@@ -50,8 +50,6 @@ export default function SignInPage() {
           password,
         });
 
-      console.log(signupData, "sign up data");
-
       if (signupError) {
         toast.error("Error While Sign Up");
         console.error(signupError.message, "error in sign up");
@@ -69,8 +67,6 @@ export default function SignInPage() {
         email,
         password,
       });
-
-    console.log(signInData, "sign in data");
 
     if (signInError) {
       console.error(signInError, "error in sign in");

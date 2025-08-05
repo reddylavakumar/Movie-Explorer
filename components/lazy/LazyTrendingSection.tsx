@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import MovieGrid from "../moviecardandgrid/MovieGrid";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { MoveRight } from "lucide-react";
 
 type TrendingSectionProps = {
   movies: any[];
@@ -10,6 +13,7 @@ type TrendingSectionProps = {
 export default function TrendingSection({ movies }: TrendingSectionProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,9 +34,25 @@ export default function TrendingSection({ movies }: TrendingSectionProps) {
     <div ref={ref} className="px-6 mt-6 min-h-[300px]">
       {isVisible && (
         <>
-          <h2 className="text-2xl font-semibold text-black dark:text-white mb-4">
-            Trending
-          </h2>
+          <div className="flex justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold text-black dark:text-white mb-4">
+                Trending
+              </h2>
+            </div>
+            <div>
+              <Button
+                variant={"link"}
+                onClick={() =>
+                  //  router.push("/trending")
+                  router.push("?type=trending")
+                }
+              >
+                Check Out More Trending Movies
+                <MoveRight />
+              </Button>
+            </div>
+          </div>
           <MovieGrid movies={movies} />
         </>
       )}
